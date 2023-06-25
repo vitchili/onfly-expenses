@@ -1,66 +1,373 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+# API Onfly Expenses
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Projeto de gerenciamento de despesas feito em PHP 8.2 e Laravel 10 com banco de dados MySql.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Documentação API Onfly Expenses
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Efetuar Login
 
-## Learning Laravel
+``
+  POST http://localhost/onfly-expenses/public/api/login
+``
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### Request body: JSON RAW
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `email` | `string` | **Obrigatório**. E-mail do usuário |
+| `password` | `string` | **Obrigatório**. Senha do usuário |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### Responses:
 
-## Laravel Sponsors
+```javascript
+1) Exemplo Status 200 - Sucesso
+  {
+    "token": "19|N67pSqkAUdmIAyiTva7ARTZu0mZChrLLb8FcVPMm"
+  }
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+#### Tratamento de erros:
+```javascript
+1) Exemplo Status 422 - Credenciais incorretas
+  {
+      "message": "As credenciais estão incorretas.",
+      "errors": {
+          "email": [
+              "As credenciais estão incorretas."
+          ]
+      }
+  }
 
-### Premium Partners
+  2) Exemplo Status 422 - Campos vazios ou inválidos.
+  {
+    "message": "O campo e-mail é obrigatório.",
+    "errors": {
+      "email": [
+        "O campo e-mail é obrigatório."
+      ]
+    }
+  }
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Criar novo usuário
 
-## Contributing
+``
+  POST http://localhost/onfly-expenses/public/api/register
+``
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### Request body: JSON RAW
 
-## Code of Conduct
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `name` | `string` | **Obrigatório**. Nome do usuário |
+| `email` | `string` | **Obrigatório**. E-mail do usuário |
+| `password` | `string` | **Obrigatório**. Senha do usuário |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Responses:
 
-## Security Vulnerabilities
+```javascript
+1) Exemplo Status 201 - Created
+  {
+    "token": "19|N67pSqkAUdmIAyiTva7ARTZu0mZChrLLb8FcVPMm"
+  }
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### Tratamento de erros:
+```javascript
+1) Exemplo Status 422 - Credenciais já utilizadas
+  {
+      "message": "O campo e-mail já está sendo utilizado",
+      "errors": {
+          "email": [
+              "O campo e-mail já está sendo utilizado."
+          ]
+      }
+  }
+  
 
-## License
+2) Exemplo Status 422 - Campos vazios ou inválidos.
+  {
+    "message": "O campo e-mail é obrigatório.",
+    "errors": {
+      "email": [
+        "O campo e-mail é obrigatório."
+      ]
+    }
+  }
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Efetuar Logout
+
+``
+  POST http://localhost/onfly-expenses/public/api/logout
+``
+
+#### Authorization: Bearer [token_de_retorno_da_rota_/login]
+
+#### Request body: [Vazio]
+
+#### Responses:
+
+```javascript
+1) Exemplo Status 200 - Sucesso
+  {
+    "message": "Logout efetuado com sucesso."
+  }
+
+2) Exemplo Status 401 - Token inválido para logout
+  {
+    "message": "Usuário não autenticado."
+  }
+```
+
+### Listar despesas
+
+``
+  GET http://localhost/onfly-expenses/public/api/expense/{id?}
+``
+
+#### Authorization: Bearer [token_de_retorno_da_rota_/login]
+
+#### Request body: [Vazio]
+
+A API retorna apenas despesas do usuário logado.
+O campo 'id' é opcional para o path param. Se estiver setado, a API retornará a despesa pesquisada. Caso contrário, a API retornará todas despesas.
+
+#### Responses:
+
+```javascript
+1) Exemplo Status 200 - Sucesso
+  {
+    "data": [
+        {
+            "id": 15,
+            "description": "Despesa sócios empresa",
+            "date": "2022-09-30 00:00:00",
+            "user": {
+                "id": 1,
+                "name": "User test"
+            },
+            "value": "223.66"
+        },
+        {
+            "id": 16,
+            "description": "Teste despesa YZ2",
+            "date": "2022-09-12 08:00:00",
+            "user": {
+                "id": 1,
+                "name": "User test"
+            },
+            "value": "123.66"
+        }
+    ]
+  }
+
+  
+2) Status 401 - Usuário não autenticado
+  {
+      "message": "Usuário não autenticado."
+  }
+```
+#### Tratamento de erros:
+```javascript
+1) Pesquisar por despesa que não pertence ao usuário logado: 
+{
+    "request_status": "Erro ao realizar operação",
+    "message": "Despesa não pertence a usuário logado."
+}
+
+2) Pesquisar por despesa inexistente:
+{
+    "request_status": "Erro ao realizar operação",
+    "message": "Despesa não encontrada. ID: 99"
+}
+```
+
+### Nova despesa
+
+``
+  POST http://localhost/onfly-expenses/public/api/expense
+``
+
+#### Authorization: Bearer [token_de_retorno_da_rota_/login]
+
+#### Request body: JSON RAW
+
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `description` | `string` | **Obrigatório**. Nome da despesa |
+| `date` | `string` | **Obrigatório**. Data da despesa |
+| `value` | `string` | **Obrigatório**. Valor da despesa |
+
+#### Responses:
+
+```javascript
+1) Exemplo Status 201 - Created
+  {
+    "request_status": "Operação realizada com sucesso.",
+    "id": 18
+}
+
+
+2) Status 401 - Usuário não autenticado
+  {
+      "message": "Usuário não autenticado."
+  }
+```
+#### Tratamento de erros:
+```javascript
+1) Json inválido
+{
+    "message": "O json é inválido.",
+    "errors": {
+        "invalid_json": [
+            "O json é inválido."
+        ]
+    }
+}
+
+2) Descrição, data e valores obrigatórios. 
+Descrição deve ser string e com máximo 191 caracteres. Data deve ser válida e anterior ao dia de hoje. 
+Valor deve ser numérico decimal válido.
+
+{
+    "message": "O campo \"descrição\" deve ter no máximo 191 caracteres. (and 2 more errors)",
+    "errors": {
+        "description": [
+            "O campo \"descrição\" deve ter no máximo 191 caracteres."
+        ],
+        "date": [
+            "O campo \"data\" deve ser anterior a hoje."
+        ],
+        "value": [
+            "O campo \"valor\" deve ser decimal."
+        ]
+    }
+}
+
+```
+
+### Editar despesa
+
+``
+  PUT http://localhost/onfly-expenses/public/api/expense/{id}
+``
+
+#### Authorization: Bearer [token_de_retorno_da_rota_/login]
+
+#### Request body: JSON RAW
+
+| Parâmetro   | Tipo       | Descrição                           |
+| :---------- | :--------- | :---------------------------------- |
+| `description` | `string` | **Opcional**. Nome da despesa |
+| `date` | `string` | **Opcional**. Data da despesa |
+| `value` | `string` | **Opcional**. Valor da despesa |
+
+Observação: O path param 'id' é obrigatório.
+
+#### Responses:
+
+```javascript
+1) Exemplo Status 200 - Success
+  {
+    "request_status": "Operação realizada com sucesso.",
+    "id": 18
+}
+
+
+2) Status 401 - Usuário não autenticado
+  {
+      "message": "Usuário não autenticado."
+  }
+```
+#### Tratamento de erros:
+```javascript
+1) Json inválido
+{
+    "message": "O json é inválido.",
+    "errors": {
+        "invalid_json": [
+            "O json é inválido."
+        ]
+    }
+}
+
+2) Descrição, data e valores obrigatórios. 
+Descrição deve ser string e com máximo 191 caracteres. Data deve ser válida e anterior ao dia de hoje. 
+Valor deve ser numérico decimal válido.
+
+{
+    "message": "O campo \"data\" deve ser anterior a hoje.",
+    "errors": {
+        "date": [
+            "O campo \"data\" deve ser anterior a hoje."
+        ]
+    }
+}
+
+{
+    "message": "O campo \"descrição\" deve ter no máximo 191 caracteres. (and 2 more errors)",
+    "errors": {
+        "description": [
+            "O campo \"descrição\" deve ter no máximo 191 caracteres."
+        ],
+        "date": [
+            "O campo \"data\" deve ser anterior a hoje."
+        ],
+        "value": [
+            "O campo \"valor\" deve ser decimal."
+        ]
+    }
+}
+
+```
+
+### Excluir despesa
+
+``
+  DELETE http://localhost/onfly-expenses/public/api/expense/{id}
+``
+
+#### Authorization: Bearer [token_de_retorno_da_rota_/login]
+
+#### Request body: [Vazio]
+
+Apenas despesas do próprio usuário logado podem ser excluídas. Id obrigatório
+
+#### Responses:
+
+```javascript
+1) Exemplo Status 200 - Success
+  {
+    "request_status": "Despesa excluída com sucesso."
+  }
+
+
+2) Status 401 - Usuário não autenticado
+  {
+      "message": "Usuário não autenticado."
+  }
+
+
+3) 
+```
+#### Tratamento de erros:
+```javascript
+1) Despesa não encontrada
+{
+    "request_status": "Erro ao realizar operação",
+    "message": "Despesa não encontrada. ID: 172"
+}
+
+2) Despesa não pertence ao usuário logado
+
+{
+    "request_status": "Erro ao realizar operação",
+    "message": "Despesa não pertence a usuário logado."
+}
+```
+
+
+
