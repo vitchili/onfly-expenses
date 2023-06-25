@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Resources\ExpenseResource;
 use App\Models\Expense;
 use Exception;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 
 class ExpenseController extends Controller
@@ -18,9 +17,9 @@ class ExpenseController extends Controller
     /**
      * Cria uma nova despesa de acordo com os dados passados por parâmetro.
      * @param StoreExpenseRequest $request
-     * @return array
+     * @return mixed
      */
-    public function store(StoreExpenseRequest $request): array
+    public function store(StoreExpenseRequest $request): mixed
     {
         $data = $request->all();
 
@@ -30,25 +29,25 @@ class ExpenseController extends Controller
         try{
             $expense->save();
 
-            return [
+            return response()->json([
                 'request_status' => 'Operação realizada com sucesso.',
                 'id' => $expense->id
-            ];
+            ], 201);
         }
         catch(Exception $e){
-            return [
+            return response()->json([
                 'request_status' => 'Erro ao adicionar despesa.', 
                 'message' => $e->getMessage()
-            ];
+            ], 500);
         }
     }
 
     /**
      * Mostra dados da despesa do id passado por parâmetro, ou de todas, se não houver id especificado.
      * @param int $id
-     * @return ExpenseResource|AnonymousResourceCollection|array
+     * @return mixed
      */
-    public function show(int $id = null): ExpenseResource|AnonymousResourceCollection|array
+    public function show(int $id = null): mixed
     {
 
         try{
@@ -60,10 +59,10 @@ class ExpenseController extends Controller
                 if($expense->user_id == auth()->user()->id){
                     $resource = new ExpenseResource($expense);
                 }else{
-                    $resource = [
+                    return response()->json([
                         'request_status' => 'Erro ao realizar operação',
                         'message' => 'Despesa não pertence a usuário logado.'
-                    ];
+                    ], 500);
                 }
             }
 
@@ -71,10 +70,10 @@ class ExpenseController extends Controller
         }
         catch(ModelNotFoundException $e){
             $id = $e->getIds();
-            return [
+            return response()->json([
                 'request_status' => 'Erro ao realizar operação',
                 'message' => "Despesa não encontrada. ID: " . implode(', ', $id)
-            ];
+            ], 500);
         }
     }
 
@@ -82,9 +81,9 @@ class ExpenseController extends Controller
      * Atualiza despesa do id passado por 'path param' com dados enviados opctionais via json.
      * @param UpdateExpenseRequest $request
      * @param int $id
-     * @return array
+     * @return mixed
      */
-    public function update(UpdateExpenseRequest $request, int $id): array
+    public function update(UpdateExpenseRequest $request, int $id): mixed
     {
         $data = $request->all();
 
@@ -93,49 +92,50 @@ class ExpenseController extends Controller
             $expense->fill($data);
             $expense->save();
 
-            return [
-                'request_status' => 'Update realizado com sucesso.',
+            return response()->json([
+                'request_status' => 'Operação realizada com sucesso.',
                 'id' => $expense->id
-            ];
+            ], 200);
 
         }
         catch(Exception $e){
-            return [
+            return response()->json([
                 'request_status' => 'Erro ao editar despesa.', 
                 'message' => $e->getMessage()
-            ];
+            ], 200);
         }
     }
 
     /**
      * Remove uma despesa específica do id passado por parâmetro, ou todas, se nenhum id for especificado.
      * @param int $id
-     * @return array
+     * @return mixed
      */
-    public function destroy(int $id = null): array
+    public function destroy(int $id): mixed
     {
-        $qtDeleted = 1;
         try{
-            if(!empty($id)){
-                $expense = Expense::findOrFail($id);
+            $expense = Expense::findOrFail($id);
+            if($expense->user_id == auth()->user()->id){
+                $delete = $expense->delete();
+                $response =  response()->json([
+                    'request_status' => 'Despesa excluída com sucesso.',
+                    'message' => $delete
+                ], 200);
             }else{
-                $expense = Expense::where('user_id', auth()->user()->id)->get();
-                $qtDeleted = $expense->count();
+                $response = response()->json([
+                    'request_status' => 'Erro ao realizar operação',
+                    'message' => 'Despesa não pertence a usuário logado.'
+                ], 500);
             }
-            $expense->delete();
-
-            return [
-                'request_status' => 'Despesas excluídas com sucesso.',
-                'quantidade_removidos' => $qtDeleted
-        
-            ];
+            return $response;
+            
         }
         catch(ModelNotFoundException $e){
             $id = $e->getIds();
-            return [
+            return response()->json([
                 'request_status' => 'Erro ao realizar operação',
                 'message' => "Despesa não encontrada. ID: " . implode(', ', $id)
-            ];
+            ], 500);
         }
     }
 

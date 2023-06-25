@@ -24,6 +24,11 @@ class AuthApiController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+        ],
+        [
+            'email.required' => 'O campo e-mail é obrigatório.',
+            'email.email' => 'O campo e-mail não é válido.',
+            'password.required' => 'O campo senha é obrigatório.'
         ]);
 
         if (Auth::attempt($credentials)) {
@@ -46,12 +51,21 @@ class AuthApiController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function register(Request $request): string
+    public function register(Request $request): mixed
     {
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
+        ],
+        [
+            'name.required' => 'O campo nome é obrigatório.',
+            'email.required' => 'O campo e-mail é obrigatório.',
+            'email.email' => 'O campo e-mail não é válido.',
+            'email.max' => 'O campo e-mail deve ter menos de 255 caracteres.',
+            'email.unique' => 'O campo e-mail já está sendo utilizado.',
+            'password.required' => 'O campo senha é obrigatório.',
+            'password.min' => 'O campo senha deve ter no mínimo 8 caracteres.'
         ]);
 
         $user = User::create([

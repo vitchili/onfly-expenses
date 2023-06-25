@@ -41,6 +41,9 @@ class UpdateExpenseRequest extends FormRequest
             $response = [
                 'description.required' => 'O campo "descrição" é obrigatório.',
                 'description.string'   => 'O campo "descrição" deve ser um texto.',
+                'description.max'      => 'O campo "descrição" deve ter no máximo 191 caracteres.',
+                'date.date'            => 'O campo "data" está inválido.',
+                'date.before'          => 'O campo "data" deve ser anterior a hoje.',
                 'value.required'       => 'O campo "valor" é obrigatório.',
                 'value.numeric'        => 'O campo "valor" deve ser decimal.',
             ];
