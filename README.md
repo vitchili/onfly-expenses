@@ -379,6 +379,9 @@ MAIL_USERNAME=236d8ecb62a15f
 MAIL_PASSWORD= *** (Consultar desenvolvedor ou criar nova conta e reconfigurar aqui)
 MAIL_ENCRYPTION=tls
 
+#### Observação
+Database name: onflyexpenses
+
 
 
 
