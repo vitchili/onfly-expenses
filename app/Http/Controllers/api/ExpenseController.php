@@ -8,8 +8,10 @@ use App\Http\Requests\Expense\UpdateExpenseRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Resources\ExpenseResource;
 use App\Models\Expense;
+use App\Models\User;
+use App\Notifications\ExpenseNotification;
 use Exception;
-
+use Illuminate\Support\Facades\Notification;
 
 class ExpenseController extends Controller
 {
@@ -28,6 +30,8 @@ class ExpenseController extends Controller
 
         try{
             $expense->save();
+            $user = User::find(auth()->user());
+            Notification::send($user, (new ExpenseNotification($expense)));
 
             return response()->json([
                 'request_status' => 'Operação realizada com sucesso.',

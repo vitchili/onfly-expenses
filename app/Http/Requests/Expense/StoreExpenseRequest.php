@@ -15,7 +15,7 @@ class StoreExpenseRequest extends FormRequest
      */
     public function rules(): array
     {
-        $response = '';
+        $response = ''; 
 
         if(Str::isJson($this->content)){
             $response = [
