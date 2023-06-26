@@ -369,5 +369,16 @@ Apenas despesas do próprio usuário logado podem ser excluídas. Id obrigatóri
 }
 ```
 
+#### Variáveis de ambiente
+Serviço: Mailtrap
+
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=236d8ecb62a15f
+MAIL_PASSWORD= *** (Consultar desenvolvedor ou criar nova conta e reconfigurar aqui)
+MAIL_ENCRYPTION=tls
+
+
 
 
